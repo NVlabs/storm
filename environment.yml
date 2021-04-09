@@ -1,0 +1,54 @@
+##
+## Copyright (c) 2020-2021 NVIDIA CORPORATION.  All rights reserved.
+##
+## NVIDIA CORPORATION and its licensors retain all intellectual property
+## and proprietary rights in and to this software, related documentation
+## and any modifications thereto.  Any use, reproduction, disclosure or
+## distribution of this software and related documentation without an express
+## license agreement from NVIDIA CORPORATION is strictly prohibited.
+##
+##
+name: storm_kit
+channels:
+  - pytorch
+  - conda-forge
+dependencies:
+  - python=3.7
+  - cudatoolkit=11.1
+  - pytorch
+  - torchvision
+  - torchaudio
+  - pyzmq
+  - numpy
+  - pytest
+  - colorlog
+  - pandas
+  - tabulate
+  - pip
+  - sk-video
+  - matplotlib
+  - quaternion
+  - pip:
+    - pytorch3d
+    - ghalton
+    - argcomplete
+    - click
+    - cloudpickle
+    - imageio-ffmpeg
+    - pyyaml
+    - scipy
+    - tqdm
+    - urdfpy
+    - wheel
+    - hydra-core
+    - urdf_parser_py
+    - sphinx-rtd-theme
+    - sphinx
+    - sphinx-autodoc-annotation
+    - hydra-core
+    - urdf_parser_py
+    - numpy-quaternion
+    - opencv-python
+    - open3d
+    - m2r2
+

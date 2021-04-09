@@ -1,0 +1,113 @@
+##
+## Copyright (c) 2020-2021 NVIDIA CORPORATION. All rights reserved.
+##
+## Permission is hereby granted, free of charge, to any person obtaining a
+## copy of this software and associated documentation files (the "Software"),
+## to deal in the Software without restriction, including without limitation
+## the rights to use, copy, modify, merge, publish, distribute, sublicense,
+## and/or sell copies of the Software, and to permit persons to whom the
+## Software is furnished to do so, subject to the following conditions:
+##
+## The above copyright notice and this permission notice shall be included in
+## all copies or substantial portions of the Software.
+##
+## THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+## IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+## FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+## THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+## LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+## FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+## DEALINGS IN THE SOFTWARE.##
+
+# @package _global_
+use_cuda: True
+cuda_device_num: 0
+
+control_dt: 0.1
+control_space: 'acc'
+float_dtype: 'float32'
+state_filter_coeff: 1.0
+cmd_filter_coeff: 1.0
+
+model:
+  # any link that is not specified as learnable will be initialized from urdf
+  #urdf_path: "urdf/franka_description/franka_panda_no_gripper.urdf"
+  #learnable_rigid_body_config:
+  #  learnable_links: []
+  #name: "franka_panda"
+  dt: 0.0
+  max_action: 0.1 #10.0
+
+  dt_traj_params:
+    base_dt: 0.1
+    base_ratio: 1.0
+    max_dt: 0.3
+  init_state: [0.0,0.0]
+  position_bounds: [[0.0, 0.5], [0.0,0.5]]
+  
+cost:
+  goal_state:
+    vec_weight: [1.0, 1.0]
+    weight: 100.0
+    gaussian_params: {'n':0, 'c':0.2, 's':0.0, 'r':10.0}
+    
+
+  zero_vel:
+    weight: 0.0
+    hinge_val: 0.2 #0.2
+    gaussian_params: {'n':0, 'c':0.2, 's':0, 'r':1.0}
+    
+  stop_cost:
+    weight: 100.0
+    max_nlimit: 0.05 #0.2
+    gaussian_params: {'n':0, 'c':0.2, 's':0, 'r':10.0}
+  stop_cost_acc:
+    weight: 100.0
+    max_limit: 0.01 #0.2
+    gaussian_params: {'n':0, 'c':0.2, 's':0, 'r':10.0}
+    
+  
+  smooth: # on robot acceleration
+    weight: 0.0 
+    gaussian_params: {'n':0, 'c':0.2, 's':0, 'r':1.0}
+    order: 3 # on velocity
+
+    
+  image_collision: # on robot acceleration
+    weight: 1000.0 
+    gaussian_params: {'n':0, 'c':1.0, 's':0, 'r':10.0}
+    collision_file: 'collision_maps/collision_map_cem.png'
+    dist_thresh: 0.01
+  state_bound:
+    weight: 100.0 
+    gaussian_params: {'n':0, 'c':1.0, 's':0, 'r':10.0}
+  terminal:
+    weight: 0.0
+    gaussian_params: {'n':0, 'c':1.0, 's':0, 'r':10.0}
+mppi:
+  horizon           : 30 # 100
+  init_cov          : 0.01 #.5
+  gamma             : 0.98 #
+  n_iters           : 1
+  step_size_mean    : 0.9
+  step_size_cov     : 0.6
+  beta              : 1.0
+  alpha             : 1
+  num_particles     : 500 #10000
+  update_cov        : True
+  cov_type          : 'diag_AxA' # 
+  kappa             : 0.0001
+  null_act_frac     : 0.01
+  sample_mode       : 'mean'
+  base_action       : 'repeat'
+  squash_fn         : 'clamp' # [clamp,]
+  hotstart          : True
+  visual_traj       : 'state_seq'
+  sample_params:
+    type: 'multiple'
+    fixed_samples: True
+    sample_ratio: {'halton':0.0, 'halton-knot':1.0, 'random':0.0, 'random-knot':0.0}
+    seed: 0
+    filter_coeffs: None #[0.5, 0.3, 0.2]
+    knot_scale: 5
+    #filter_coeffs: [1.0, 0.0, 0.0]
