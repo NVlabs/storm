@@ -13,4 +13,7 @@ Most files are documented with sphinx. Once you clone this repo, go into docs fo
 
 
 ## Citation
-This code was developed as part of a research publication. The bib for the publication will be added soon. 
+This code was developed as part of a research publication. The bib for the publication will be added soon.
+
+## Contributing to this code
+Refer to CLA before making contributions.
