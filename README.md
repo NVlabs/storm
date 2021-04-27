@@ -13,7 +13,16 @@ Most files are documented with sphinx. Once you clone this repo, go into docs fo
 
 
 ## Citation
-This code was developed as part of a research publication. The bib for the publication will be added soon.
+If you use this source code, please cite the below article,
+
+```
+@article{storm2021,
+  title={Fast Joint Space Model-Predictive Control for Reactive Manipulation},
+  author={Mohak Bhardwaj and Balakumar Sundaralingam and Arsalan Mousavian and Nathan Ratliff and Dieter Fox and Fabio Ramos and Byron Boots},
+  journal={arXiv preprint},
+  year={2021}
+}
+```
 
 ## Contributing to this code
 Refer to CLA before making contributions.

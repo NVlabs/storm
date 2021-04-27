@@ -69,12 +69,13 @@ class ArmReacher(ArmBase):
 
         cost += goal_cost
         
-        if(return_dist):
-            return cost, rot_err_norm, goal_dist
         # joint l2 cost
         if(self.exp_params['cost']['joint_l2']['weight'] > 0.0 and goal_state is not None):
             disp_vec = state_batch[:,:,0:self.n_dofs] - goal_state[:,0:self.n_dofs]
             cost += self.dist_cost.forward(disp_vec)
+
+        if(return_dist):
+            return cost, rot_err_norm, goal_dist
 
             
         if self.exp_params['cost']['zero_acc']['weight'] > 0:
@@ -100,12 +101,15 @@ class ArmReacher(ArmBase):
         
         if(goal_ee_pos is not None):
             self.goal_ee_pos = torch.as_tensor(goal_ee_pos, **self.tensor_args).unsqueeze(0)
+            self.goal_state = None
         if(goal_ee_rot is not None):
             self.goal_ee_rot = torch.as_tensor(goal_ee_rot, **self.tensor_args).unsqueeze(0)
             self.goal_ee_quat = matrix_to_quaternion(self.goal_ee_rot)
+            self.goal_state = None
         if(goal_ee_quat is not None):
             self.goal_ee_quat = torch.as_tensor(goal_ee_quat, **self.tensor_args).unsqueeze(0)
             self.goal_ee_rot = quaternion_to_matrix(self.goal_ee_quat)
+            self.goal_state = None
         if(goal_state is not None):
             self.goal_state = torch.as_tensor(goal_state, **self.tensor_args).unsqueeze(0)
             self.goal_ee_pos, self.goal_ee_rot = self.dynamics_model.robot_model.compute_forward_kinematics(self.goal_state[:,0:self.n_dofs], self.goal_state[:,self.n_dofs:2*self.n_dofs], link_name=self.exp_params['model']['ee_link_name'])
