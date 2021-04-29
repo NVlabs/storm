@@ -44,7 +44,7 @@ class RobotDataset(torch.utils.data.Dataset):
 def create_dataset(robot_name):
     checkpoints_dir = get_weights_path()+'/robot_self'
     num_particles = 5000
-    task_file = robot_name+'_base.yml'
+    task_file = robot_name+'_reacher.yml'
     # load robot model:
     device = torch.device('cuda', 0) 
     tensor_args = {'device':device, 'dtype':torch.float32}

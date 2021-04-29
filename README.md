@@ -1,7 +1,7 @@
 # STORM
 **Stochastic Tensor Optimization for Robot Motion** - *A GPU Robot Motion Toolkit*
 
-[[Install Instructions](install_instructions.md)]
+[[Install Instructions](install_instructions.md)] [[Paper](https://arxiv.org/abs/2104.13542)] [[Website](https://sites.google.com/view/manipulation-mppi/home)]
 
 This package contains code for reactive robot motion leveraging parallel compute on the GPU. The implemented control framework leverages MPPI to optimize over sampled actions and their costs. The costs are computed by rolling out the forward model from the current state with the sampled actions.
 
