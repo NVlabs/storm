@@ -158,7 +158,7 @@ def mpc_robot_interactive(args, gym_instance):
 
     mpc_tensor_dtype = {'device':device, 'dtype':torch.float32}
 
-    franka_bl_state = np.array([-0.85, 0.6, 0.2, -1.8, 0.0, 2.4,0.0,
+    franka_bl_state = np.array([-0.3, 0.3, 0.2, -2.0, 0.0, 2.4,0.0,
                                 0.0,0.0,0.0,0.0,0.0,0.0,0.0])
     x_des_list = [franka_bl_state]
     
@@ -257,7 +257,7 @@ def mpc_robot_interactive(args, gym_instance):
             
 
             
-            command = mpc_control.get_command(t_step, current_robot_state, control_dt=sim_dt, WAIT=False)
+            command = mpc_control.get_command(t_step, current_robot_state, control_dt=sim_dt, WAIT=True)
 
             filtered_state_mpc = current_robot_state #mpc_control.current_state
             curr_state = np.hstack((filtered_state_mpc['position'], filtered_state_mpc['velocity'], filtered_state_mpc['acceleration']))
@@ -302,6 +302,7 @@ def mpc_robot_interactive(args, gym_instance):
                 gym_instance.draw_lines(pts, color=color)
             
             robot_sim.command_robot_position(q_des, env_ptr, robot_ptr)
+            #robot_sim.set_robot_state(q_des, qd_des, env_ptr, robot_ptr)
             current_state = command
             
             i += 1

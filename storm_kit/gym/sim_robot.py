@@ -141,7 +141,7 @@ class RobotSim():
         # for torque control:
         #robot_dof_props['driveMode'].fill(gymapi.DOF_MODE_EFFORT)
         #robot_dof_props['stiffness'].fill(0.0) # = self.joint_stiffnness[:self.num_dofs]
-        #robot_dof_props['damping'].fill(1.0) # To avoidxb oscilaatuions?
+        #robot_dof_props['damping'].fill(0.0) # To avoidxb oscilaatuions?
 
         # for position control:
         robot_dof_props['driveMode'].fill(gymapi.DOF_MODE_POS)

@@ -108,9 +108,10 @@ class JointStateFilter(object):
         self.prev_cmd_qdd = self.cmd_joint_state['acceleration']
         return self.cmd_joint_state
 
-    def integrate_acc(self, qdd_des, raw_joint_state, dt=None):
+    def integrate_acc(self, qdd_des, raw_joint_state=None, dt=None):
         dt = self.dt if dt is None else dt
-        self.filter_joint_state(raw_joint_state)
+        if(raw_joint_state is not None):
+            self.filter_joint_state(raw_joint_state)
         self.cmd_joint_state['acceleration'] = qdd_des
         self.cmd_joint_state['velocity'] = self.cmd_joint_state['velocity'] + qdd_des * dt
         self.cmd_joint_state['position'] = self.cmd_joint_state['position'] + self.cmd_joint_state['velocity'] * dt

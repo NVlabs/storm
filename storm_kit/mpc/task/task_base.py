@@ -54,7 +54,7 @@ class BaseTask():
     def get_command(self, t_step, curr_state, control_dt, WAIT=False):
 
         # predict forward from previous action and previous state:
-        self.state_filter.predict_internal_state(self.prev_qdd_des)
+        #self.state_filter.predict_internal_state(self.prev_qdd_des)
 
         if(self.state_filter.cmd_joint_state is None):
             curr_state['velocity'] *= 0.0
@@ -68,7 +68,7 @@ class BaseTask():
 
         qdd_des = next_command
         self.prev_qdd_des = qdd_des
-        cmd_des = self.command_filter.integrate_acc(qdd_des, filt_state)
+        cmd_des = self.state_filter.integrate_acc(qdd_des)
 
         return cmd_des
 

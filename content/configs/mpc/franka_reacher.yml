@@ -25,12 +25,12 @@
 use_cuda: True
 cuda_device_num: 0
 
-control_dt: 0.03
+control_dt: 0.02
 run_open_loop: False
 control_space: 'acc'
 float_dtype: 'float32'
-state_filter_coeff: {'position':0.1, 'velocity':0.0, 'acceleration':1.0}
-cmd_filter_coeff: {'position':1.0, 'velocity':1.0, 'acceleration':1.0}
+state_filter_coeff: {'position':0.1, 'velocity':0.0, 'acceleration':0.0}
+cmd_filter_coeff: {'position':1.0, 'velocity':1.0, 'acceleration':0.0}
 
 model:
   # any link that is not specified as learnable will be initialized from urdf
@@ -38,10 +38,10 @@ model:
   learnable_rigid_body_config:
     learnable_links: []
   name: "franka_panda"
-  max_acc: 0.1 #10.0
-  dt: 0.03
+  max_acc: 5.0 
+  dt: 0.02
   dt_traj_params:
-    base_dt: 0.03
+    base_dt: 0.02
     base_ratio: 0.5
     max_dt: 0.2
   #control_freq: 10
@@ -50,7 +50,7 @@ model:
   init_state: [0.8, 0.3, 0.0, -1.57, 0.0, 1.86, 0.]
   link_names: ['panda_link2','panda_link3','panda_link4','panda_link5', 'panda_link6','panda_hand']
   #link_names: ['panda_link6']
-  vel_scale: 0.5
+  vel_scale: 1.0
   collision_spheres: '../robot/franka.yml'
   
   robot_collision_params:
@@ -76,7 +76,7 @@ model:
 cost:
   goal_pose:
     vec_weight: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
-    weight: [10.0, 100.0]
+    weight: [15.0, 100.0]
     position_gaussian_params: {'n':0, 'c':0.0, 's':0.0, 'r':10.0}
     orientation_gaussian_params: {'n':0, 'c':0.0, 's':0.0, 'r':10.0}
     hinge_val: -1
@@ -98,7 +98,7 @@ cost:
     
   primitive_collision:
     weight: 5000.0
-    distance_threshold: 0.06
+    distance_threshold: 0.05
     gaussian_params: {'n':0, 'c':0.0, 's':0, 'r':10.0}
 
   robot_self_collision:
@@ -108,14 +108,14 @@ cost:
     
 
   null_space:
-    weight: 0.1 #0.01 #0.05 #0.5 #1.0
+    weight: 1.0 #0.01 #0.05 #0.5 #1.0
     gaussian_params: {'n':0, 'c':0.0, 's':0, 'r':1.0}
     vec_weight: [1.0, 1.0, 1.0, 1.0, 1.0, 0.5, 0.5]
     #retract_state : [-1.57, -1.2, 1.9, -1.383, -1.57, 0.00]
   manipulability:
-    weight: 100.0 #100.0 #0.05 #0.5 #1.0
+    weight: 30.0 #100.0 #0.05 #0.5 #1.0
     gaussian_params: {'n':0, 'c':0.0, 's':0, 'r':10.0}
-    thresh: 0.05
+    thresh: 0.03
 
   joint_l2:
     weight: 0.0
@@ -133,11 +133,11 @@ cost:
     
   stop_cost:
     weight: 100.0
-    max_nlimit: 0.5 #0.2
+    max_nlimit: 1.5 #0.2
     gaussian_params: {'n':0, 'c':0.0, 's':0, 'r':1.0}
 
   stop_cost_acc:
-    weight: 10.0
+    weight: 0.0
     max_limit: 0.1 #0.2
     gaussian_params: {'n':0, 'c':0.0, 's':0, 'r':1.0}
 
@@ -153,16 +153,16 @@ cost:
     gaussian_params: {'n':0, 'c':0.2, 's':0, 'r':10.0}
     order: 1
   state_bound:
-    weight: 100.0 
+    weight: 1000.0 
     gaussian_params: {'n':0, 'c':0.0, 's':0, 'r':10.0}
-    bound_thresh: 0.1
+    bound_thresh: 0.05
   
   retract_state : [0.00, 0.0, 0.00, -1.5, 0.00, 2.0, 0.0]
   retract_weight: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0,0.0]
 
 mppi:
   horizon           : 30
-  init_cov          : 0.01 #.5 #.5
+  init_cov          : 0.005 #.5 #.5
   gamma             : 0.98
   n_iters           : 1
   step_size_mean    : 0.98
@@ -170,7 +170,7 @@ mppi:
   beta              : 1.0
   alpha             : 1
   num_particles     : 500 #10000
-  update_cov        : True
+  update_cov        : False
   cov_type          : 'diag_AxA' # 
   kappa             : 0.005
   null_act_frac     : 0.01
