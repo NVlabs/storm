@@ -109,21 +109,21 @@ class OLGaussianMPC(Controller):
         # initialize sampling library:
         if sample_params['type'] == 'stomp':
             self.sample_lib = StompSampleLib(self.horizon, self.d_action, tensor_args=self.tensor_args)
-            self.sample_shape = torch.Size([self.num_nonzero_particles - 2], device=self.tensor_args['device'])
+            self.sample_shape = torch.Size([self.num_nonzero_particles - 2])
             self.i_ha = torch.eye(self.d_action, **self.tensor_args).repeat(1, self.horizon)
 
         elif sample_params['type'] == 'halton':
             self.sample_lib = HaltonSampleLib(self.horizon, self.d_action,
                                               tensor_args=self.tensor_args,
                                               **self.sample_params)
-            self.sample_shape = torch.Size([self.num_nonzero_particles - 2], device=self.tensor_args['device'])
+            self.sample_shape = torch.Size([self.num_nonzero_particles - 2])
         elif sample_params['type'] == 'random':
             self.sample_lib = RandomSampleLib(self.horizon, self.d_action, tensor_args=self.tensor_args,
                                               **self.sample_params)
-            self.sample_shape = torch.Size([self.num_nonzero_particles - 2], device=self.tensor_args['device'])
+            self.sample_shape = torch.Size([self.num_nonzero_particles - 2])
         elif sample_params['type'] == 'multiple':
             self.sample_lib = MultipleSampleLib(self.horizon, self.d_action, tensor_args=self.tensor_args, **self.sample_params)
-            self.sample_shape = torch.Size([self.num_nonzero_particles - 2], device=self.tensor_args['device'])
+            self.sample_shape = torch.Size([self.num_nonzero_particles - 2])
 
         self.stomp_matrix = None #self.sample_lib.stomp_cov_matrix
         # initialize covariance types:
