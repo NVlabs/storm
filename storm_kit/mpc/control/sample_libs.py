@@ -312,7 +312,7 @@ class MultipleSampleLib(SampleLib):
                 if(self.sample_ratio[k] == 0.0):
                     continue
                 n_samples = round(sample_shape[0] * self.sample_ratio[k])
-                s_shape = torch.Size([n_samples],**self.tensor_args)
+                s_shape = torch.Size([n_samples])
                 #if(k == 'halton' or k == 'random'):
                 samples = self.sample_fns[k](sample_shape=s_shape)
                 #else:
@@ -365,7 +365,7 @@ class HaltonStompSampleLib(SampleLib):
         halton_sample_size = list(sample_shape)
         halton_sample_size[0] = round(self.halton_ratio * halton_sample_size[0])
 
-        halton_samples = self.knot_sample_lib.get_samples(sample_shape=torch.Size(halton_sample_size,**self.tensor_args))
+        halton_samples = self.knot_sample_lib.get_samples(sample_shape=torch.Size(halton_sample_size))
         #halton_samples = self.halton_sample_lib.get_samples(sample_shape=torch.Size(halton_sample_size,**self.tensor_args), filter_smooth=False)
 
         # filter halton samples:
@@ -375,7 +375,7 @@ class HaltonStompSampleLib(SampleLib):
         
         stomp_sample_size = list(sample_shape)
         stomp_sample_size[0] = round(self.stomp_ratio * stomp_sample_size[0])
-        stomp_samples = self.stomp_sample_lib.get_samples(sample_shape=torch.Size(stomp_sample_size,**self.tensor_args))
+        stomp_samples = self.stomp_sample_lib.get_samples(sample_shape=torch.Size(stomp_sample_size))
         
         
         #sine_samples = self.sine_sample_lib.get_samples(sample_shape=torch.Size(stomp_sample_size,**self.tensor_args))
