@@ -7,7 +7,7 @@ This package contains code for reactive robot motion leveraging parallel compute
 
 **To run on a real Franka Panda, you can use this low-level control wrapper:** [franka_motion_control](https://github.com/mohakbhardwaj/franka_motion_control) from [Mohak Bhardwaj](https://github.com/mohakbhardwaj).
 <p align="center">
-  <img width="300" src="docs/images/coll_demo.gif">
+  <img width="250" src="docs/images/coll_demo.gif">
   <img width="300" src="docs/images/constrained_storm.gif">
 </p>
 
