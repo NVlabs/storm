@@ -1,7 +1,7 @@
 ##
 ## MIT License
 ##
-## Copyright (c) 2020-2021 NVIDIA CORPORATION.
+## Copyright (c) 2020-2022 NVIDIA CORPORATION.
 ##
 ## Permission is hereby granted, free of charge, to any person obtaining a
 ## copy of this software and associated documentation files (the "Software"),
@@ -24,22 +24,24 @@ robot: 'Franka Panda'
 
 collision_spheres:
     panda_link0:
-        - "center": [0.0, 0.0, 0.05]
+        - "center": [-0.08, 0.0, 0.05]
+          "radius": 0.06
+        - "center": [-0.0, 0.0, 0.05]
           "radius": 0.08
     panda_link1:
         - "center": [0.0, -0.08, 0.0]
-          "radius": 0.06
+          "radius": 0.1
         - "center": [0.0, -0.03, 0.0]
-          "radius": 0.06
+          "radius": 0.1
         - "center": [0.0, 0.0, -0.12]
           "radius": 0.06
         - "center": [0.0, 0.0, -0.17]
           "radius": 0.06
     panda_link2:
         - "center": [0.0, 0.0, 0.03]
-          "radius": 0.06
+          "radius": 0.1
         - "center": [0.0, 0.0, 0.08]
-          "radius": 0.06
+          "radius": 0.1
         - "center": [0.0, -0.12, 0.0]
           "radius": 0.06
         - "center": [0.0, -0.17, 0.0]
@@ -64,29 +66,29 @@ collision_spheres:
           "radius": 0.055
     panda_link5:
         - "center": [0.0, 0.055, 0.0]
-          "radius": 0.06
-        - "center": [0.0, 0.075, 0.0]
-          "radius": 0.06
-        - "center": [0.0, 0.000, -0.22]
-          "radius": 0.06
-        - "center": [0.0, 0.05, -0.18]
           "radius": 0.05
-        - "center": [0.01, 0.08, -0.14]
-          "radius": 0.025
-        - "center": [0.01, 0.085, -0.11]
-          "radius": 0.025
-        - "center": [0.01, 0.09, -0.08]
-          "radius": 0.025
-        - "center": [0.01, 0.095, -0.05]
-          "radius": 0.025
-        - "center": [-0.01, 0.08, -0.14]
-          "radius": 0.025
-        - "center": [-0.01, 0.085, -0.11]
-          "radius": 0.025
-        - "center": [-0.01, 0.09, -0.08]
-          "radius": 0.025
-        - "center": [-0.01, 0.095, -0.05]
-          "radius": 0.025
+        - "center": [0.0, 0.085, 0.0]
+          "radius": 0.055
+        - "center": [0.0, 0.000, -0.22]
+          "radius": 0.05
+        - "center": [0.0, 0.05, -0.18]
+          "radius": 0.045
+        - "center": [0.015, 0.08, -0.14]
+          "radius": 0.03
+        - "center": [0.015, 0.085, -0.11]
+          "radius": 0.03
+        - "center": [0.015, 0.09, -0.08]
+          "radius": 0.03
+        - "center": [0.015, 0.095, -0.05]
+          "radius": 0.03
+        - "center": [-0.015, 0.08, -0.14]
+          "radius": 0.03
+        - "center": [-0.015, 0.085, -0.11]
+          "radius": 0.03
+        - "center": [-0.015, 0.09, -0.08]
+          "radius": 0.03
+        - "center": [-0.015, 0.095, -0.05]
+          "radius": 0.03
     panda_link6:
         - "center": [0.0, 0.0, 0.0]
           "radius": 0.05
@@ -106,39 +108,46 @@ collision_spheres:
         - "center": [0.06, 0.04, 0.085]
           "radius": 0.02
     panda_hand:
-        - "center": [0.0, -0.075, 0.01]
-          "radius": 0.028
+        - "center": [0.0, -0.08, 0.01]
+          "radius": 0.03
         - "center": [0.0, -0.045, 0.01]
-          "radius": 0.028
+          "radius": 0.03
         - "center": [0.0, -0.015, 0.01]
-          "radius": 0.028
+          "radius": 0.03
         - "center": [0.0, 0.015, 0.01]
-          "radius": 0.028
+          "radius": 0.03
         - "center": [0.0, 0.045, 0.01]
-          "radius": 0.028
-        - "center": [0.0, 0.075, 0.01]
-          "radius": 0.028
-        - "center": [0.0, -0.075, 0.03]
-          "radius": 0.026
-        - "center": [0.0, -0.045, 0.03]
-          "radius": 0.026
-        - "center": [0.0, -0.015, 0.03]
-          "radius": 0.026
-        - "center": [0.0, 0.015, 0.03]
-          "radius": 0.026
-        - "center": [0.0, 0.045, 0.03]
-          "radius": 0.026
-        - "center": [0.0, 0.075, 0.03]
-          "radius": 0.026
-        - "center": [0.0, -0.075, 0.05]
-          "radius": 0.024
+          "radius": 0.03
+        - "center": [0.0, 0.08, 0.01]
+          "radius": 0.03
+        - "center": [0.0, 0.065, -0.02]
+          "radius": 0.05
+        - "center": [0.0, -0.08, 0.05]
+          "radius": 0.05
         - "center": [0.0, -0.045, 0.05]
-          "radius": 0.024
+          "radius": 0.05
         - "center": [0.0, -0.015, 0.05]
-          "radius": 0.024
+          "radius": 0.05
         - "center": [0.0, 0.015, 0.05]
-          "radius": 0.024
+          "radius": 0.05
         - "center": [0.0, 0.045, 0.05]
-          "radius": 0.024
-        - "center": [0.0, 0.075, 0.05]
-          "radius": 0.024
+          "radius": 0.05
+        - "center": [0.0, 0.08, 0.05]
+          "radius": 0.05
+        - "center": [0.0, 0.08, 0.08]
+          "radius": 0.05
+        - "center": [0.0, -0.08, 0.08]
+          "radius": 0.05
+        - "center": [0.0, 0.05, 0.08]
+          "radius": 0.05
+        - "center": [0.0, -0.05, 0.08]
+          "radius": 0.05
+        - "center": [0.0, 0.0, 0.08]
+          "radius": 0.05
+    panda_leftfinger:
+        - "center": [0.0, 0.01, 0.034]
+          "radius": 0.02
+    panda_rightfinger:
+        - "center": [0.0, -0.01, 0.034]
+          "radius": 0.02
+          

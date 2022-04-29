@@ -55,8 +55,8 @@ def build_fd_matrix(horizon, device='cpu', dtype=torch.float32, order=1, PREV_ST
     else:
         fd_mat = torch.zeros((horizon, horizon),device=device, dtype=dtype)
         one_t = torch.ones(horizon - 1, device=device, dtype=dtype)
-        fd_mat[:horizon - 1, :horizon - 1] = torch.diag_embed(one_t)
-        fd_mat += - torch.diag_embed(one_t, offset=1)
+        fd_mat[:horizon - 1, :horizon - 1] = -1.0 * torch.diag_embed(one_t)
+        fd_mat += torch.diag_embed(one_t, offset=1)
 
     return fd_mat
 
