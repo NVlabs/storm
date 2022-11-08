@@ -209,7 +209,10 @@ class ArmBase(RolloutBase):
 
         
         return cost
-    
+
+    def get_spheres(self):
+        return self.robot_self_collision_cost.coll.w_batch_link_spheres    
+        
     def rollout_fn(self, start_state, act_seq):
         """
         Return sequence of costs and states encountered

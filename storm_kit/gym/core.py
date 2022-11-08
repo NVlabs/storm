@@ -114,6 +114,26 @@ class Gym(object):
         self.gym.add_lines(self.viewer,self.env_list[env_idx],pts.shape[0] - 1,verts, colors)
         #self.gym.add_lines(self.viewer,self.env_list[env_idx],pts.shape[0] - 1,verts, colors)
 
+    def draw_sphere(self, pose, diameter, edges):
+        sphere_rot = gymapi.Quat.from_euler_zyx(0.5 * np.pi, 0, 0)
+        sphere_pose = gymapi.Transform(r=sphere_rot)
+        sphere_geom = gymutil.WireframeSphereGeometry(diameter, edges, edges, sphere_pose, color=(1, 0, 0)) # Should be radius?
+
+        verts = sphere_geom.instance_verts(pose)
+        colors = np.empty(1, dtype=gymapi.Vec3.dtype)
+        # colors = (1, 1, 0)
+        self.gym.add_lines(self.viewer,self.env_list[0], sphere_geom.num_lines(), verts, sphere_geom.colors())
+
+    def draw_collision_spheres(self, sub_sphere, w_T_r):
+        print(sub_sphere)
+        goal_pose = gymapi.Transform()
+        goal_pose.p = gymapi.Vec3(sub_sphere[0], sub_sphere[1], sub_sphere[2])
+        goal_pose.r = gymapi.Quat(0, 0.707, 0, 0.707)
+        w_T_r_pose = w_T_r * goal_pose
+        radius = sub_sphere[3]
+        edges = 6
+        self.draw_sphere(w_T_r_pose, radius, edges)
+
 class World(object):
     def __init__(self, gym_instance, sim_instance, env_ptr, world_params=None, w_T_r=None):
         self.gym = gym_instance
