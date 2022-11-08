@@ -301,6 +301,25 @@ def mpc_robot_interactive(args, gym_instance):
                 color[1] = 1.0 - float(k) / float(top_trajs.shape[0])
                 gym_instance.draw_lines(pts, color=color)
             
+            link_pos_seq = copy.deepcopy(mpc_control.controller.rollout_fn.link_pos_seq)
+            link_rot_seq = copy.deepcopy(mpc_control.controller.rollout_fn.link_rot_seq)
+            batch_size = link_pos_seq.shape[0]
+            horizon = link_pos_seq.shape[1]
+            n_links = link_pos_seq.shape[2]
+            link_pos = link_pos_seq.view(batch_size * horizon, n_links, 3)
+            link_rot = link_rot_seq.view(batch_size * horizon, n_links, 3, 3)
+            mpc_control.controller.rollout_fn.robot_self_collision_cost.coll.update_batch_robot_collision_objs(link_pos, link_rot)
+
+            spheres = mpc_control.controller.rollout_fn.get_spheres()
+            arr = None
+            for sphere in spheres:
+                if arr is None:
+                    arr = np.array(sphere[1:,:,:4].cpu().numpy().squeeze())
+                else:
+                    arr = np.vstack((arr,sphere[1:,:,:4].cpu().numpy().squeeze()))
+
+            [gym_instance.draw_collision_spheres(sphere,w_T_r) for sphere in arr]
+            
             robot_sim.command_robot_position(q_des, env_ptr, robot_ptr)
             #robot_sim.set_robot_state(q_des, qd_des, env_ptr, robot_ptr)
             current_state = command
