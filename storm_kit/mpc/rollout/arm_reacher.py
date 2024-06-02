@@ -116,4 +116,52 @@ class ArmReacher(ArmBase):
             self.goal_ee_quat = matrix_to_quaternion(self.goal_ee_rot)
         
         return True
-    
+
+    def change_cost_param_dict(self, cost_type ,dict):
+        for key in dict[cost_type].keys():
+            self.exp_params['cost'][cost_type][key] = dict[cost_type][key]
+
+    def change_cost_params(self, param_dict):
+        
+        if 'null_space' in param_dict:
+            self.null_cost.change_param(**param_dict['null_space'])
+            self.change_cost_param_dict('null_space', param_dict)
+        if 'manipulability' in param_dict:
+            self.manipulability_cost.change_param(**param_dict['manipulability'])
+            self.change_cost_param_dict('manipulability', param_dict)
+        if 'zero_vel' in param_dict:
+            self.zero_vel_cost.change_param(**param_dict['zero_vel'])
+            self.change_cost_param_dict('zero_vel', param_dict)
+        if 'zero_acc' in param_dict:
+            self.zero_acc_cost.change_param(**param_dict['zero_acc'])
+            self.change_cost_param_dict('zero_acc', param_dict)
+        if 'stop_cost' in param_dict:
+            self.stop_cost.change_param(**param_dict['stop_cost'])
+            self.change_cost_param_dict('stop_cost', param_dict)
+        if 'stop_cost_acc' in param_dict:
+            self.stop_cost_acc.change_param(**param_dict['stop_cost_acc'])
+            self.change_cost_param_dict('stop_cost_acc', param_dict)
+        if 'smooth' in param_dict:
+            self.smooth_cost.change_param(**param_dict['smooth'])
+            self.change_cost_param_dict('smooth', param_dict)
+        if 'voxel_collision' in param_dict:
+            self.voxel_collision_cost.change_param(**param_dict['voxel_collision'])
+            self.change_cost_param_dict('voxel_collision', param_dict)
+        if 'primitive_collision' in param_dict:
+            self.primitive_collision_cost.change_param(**param_dict['primitive_collision'])
+            self.change_cost_param_dict('primitive_collision', param_dict)
+        if 'robot_self_collision' in param_dict:
+            self.robot_self_collision_cost.change_param(**param_dict['robot_self_collision'])
+            self.change_cost_param_dict('robot_self_collision', param_dict)
+        if 'ee_vel' in param_dict:
+            self.ee_vel_cost.change_param(**param_dict['ee_vel'])
+            self.change_cost_param_dict('ee_vel', param_dict)
+        if 'state_bound' in param_dict:
+            self.bound_cost.change_param(**param_dict['state_bound'])
+            self.change_cost_param_dict('state_bound', param_dict)
+        if 'joint_l2' in param_dict:
+            self.dist_cost.change_param(**param_dict['joint_l2'])
+            self.change_cost_param_dict('joint_l2', param_dict)
+        if 'goal_pose' in param_dict:
+            self.goal_cost.change_param(**param_dict['goal_pose'])
+            self.change_cost_param_dict('goal_pose', param_dict)

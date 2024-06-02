@@ -27,9 +27,9 @@ channels:
 dependencies:
   - python=3.7
   - cudatoolkit=11.1
-  - pytorch
-  - torchvision
-  - torchaudio
+  - pytorch=1.8.1
+  - torchvision=0.9.1
+  - torchaudio=0.8.1
   - pyzmq
   - numpy
   - pytest

@@ -53,3 +53,8 @@ class BoundCost(nn.Module):
         cost = self.weight * self.proj_gaussian(torch.sqrt(cost))
         
         return cost.to(inp_device)
+
+    def change_param(self, **kwargs):
+        if 'weight' in kwargs:
+            print('changing bound_cost weight to', kwargs['weight'])
+            self.weight = torch.as_tensor(kwargs['weight'], **self.tensor_args)

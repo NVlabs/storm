@@ -111,3 +111,7 @@ class PoseCost(nn.Module):
         return cost.to(inp_device), rot_err_norm, goal_dist
 
 
+    def change_param(self, **kwargs):
+        if 'weight' in kwargs:
+            print('changing pose_cost weight to', kwargs['weight'])
+            self.weight = kwargs['weight']

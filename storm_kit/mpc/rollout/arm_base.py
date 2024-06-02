@@ -111,20 +111,20 @@ class ArmBase(RolloutBase):
         
 
         
-        if self.exp_params['cost']['smooth']['weight'] > 0:
-            self.smooth_cost = FiniteDifferenceCost(**self.exp_params['cost']['smooth'],
-                                                    tensor_args=self.tensor_args)
+        # if self.exp_params['cost']['smooth']['weight'] > 0:
+        self.smooth_cost = FiniteDifferenceCost(**self.exp_params['cost']['smooth'],
+                                                tensor_args=self.tensor_args)
 
         if(self.exp_params['cost']['voxel_collision']['weight'] > 0):
             self.voxel_collision_cost = VoxelCollisionCost(robot_params=robot_params,
                                                            tensor_args=self.tensor_args,
                                                            **self.exp_params['cost']['voxel_collision'])
             
-        if(exp_params['cost']['primitive_collision']['weight'] > 0.0):
-            self.primitive_collision_cost = PrimitiveCollisionCost(world_params=world_params, robot_params=robot_params, tensor_args=self.tensor_args, **self.exp_params['cost']['primitive_collision'])
+        # if(exp_params['cost']['primitive_collision']['weight'] > 0.0):
+        self.primitive_collision_cost = PrimitiveCollisionCost(world_params=world_params, robot_params=robot_params, tensor_args=self.tensor_args, **self.exp_params['cost']['primitive_collision'])
 
-        if(exp_params['cost']['robot_self_collision']['weight'] > 0.0):
-            self.robot_self_collision_cost = RobotSelfCollisionCost(robot_params=robot_params, tensor_args=self.tensor_args, **self.exp_params['cost']['robot_self_collision'])
+        # if(exp_params['cost']['robot_self_collision']['weight'] > 0.0):
+        self.robot_self_collision_cost = RobotSelfCollisionCost(robot_params=robot_params, tensor_args=self.tensor_args, **self.exp_params['cost']['robot_self_collision'])
 
 
         self.ee_vel_cost = EEVelCost(ndofs=self.n_dofs,device=device, float_dtype=float_dtype,**exp_params['cost']['ee_vel'])
@@ -302,3 +302,13 @@ class ArmBase(RolloutBase):
         cost = self.cost_fn(state_dict, None,no_coll=no_coll, horizon_cost=False, return_dist=True)
 
         return cost, state_dict
+
+    def change_horizon(self, horizon):
+
+        #call dynamic model change_horizon
+        dynamics_horizon = horizon * self.exp_params['model']['dt']
+        self.dynamics_model.change_horizon(dynamics_horizon)
+
+        self.traj_dt = self.dynamics_model.traj_dt
+        self.stop_cost.change_traj_dt(self.traj_dt)
+        self.stop_cost_acc.change_traj_dt(self.traj_dt)

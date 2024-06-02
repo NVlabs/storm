@@ -306,10 +306,18 @@ def mpc_robot_interactive(args, gym_instance):
             current_state = command
             
             i += 1
+            # if i%100 == 0: print(f'\n\nstep {i}\n\n')
+            # if i==500: mpc_control.controller.rollout_fn.null_cost.change_param(weight=15)
+            # if i == 800: mpc_control.controller.rollout_fn.null_cost.change_param(weight=7)
+            # change_dict = {'state_bound':{'weight':13},'ee_vel':{'weight':6},
+            #                'joint_l2':{'weight':17},'goal_pose':{'weight':[11.0, 21.0]}}
+            # if i == 100 : mpc_control.controller.rollout_fn.change_cost_params(change_dict)
+            # if i == 100: mpc_control.change_num_particles(1000)
+            # if i == 200: mpc_control.change_num_particles(100)
+            if i == 100: mpc_control.change_horizon(50)
+            if i == 200: mpc_control.change_horizon(20)
 
-            
 
-            
         except KeyboardInterrupt:
             print('Closing')
             done = True

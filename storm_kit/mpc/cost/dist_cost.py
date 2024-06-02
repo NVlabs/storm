@@ -61,3 +61,7 @@ class DistCost(nn.Module):
         return cost.to(inp_device)
 
 
+    def change_param(self, **kwargs):
+        if 'weight' in kwargs:
+            print('changing dist_cost weight to', kwargs['weight'])
+            self.weight = torch.as_tensor(kwargs['weight'], device=self.device, dtype=self.float_dtype)

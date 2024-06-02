@@ -86,3 +86,11 @@ class FiniteDifferenceCost(nn.Module):
         
         
         return cost
+
+    def change_param(self, **kwargs):
+        if 'weight' in kwargs:
+            print('changing smooth_cost weight to', kwargs['weight'])
+            weight = torch.as_tensor(kwargs['weight'], **self.tensor_args)
+            for _ in range(self.order):
+                weight *= weight
+            self.weight = weight

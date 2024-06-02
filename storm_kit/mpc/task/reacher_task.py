@@ -48,3 +48,6 @@ class ReacherTask(ArmTask):
         rollout_fn = ArmReacher(**kwargs)
         return rollout_fn
 
+    def change_num_particles(self, num_particles):
+        self.controller.change_num_particles(num_particles)
+        self.controller.rollout_fn.dynamics_model.change_batch_size(num_particles)

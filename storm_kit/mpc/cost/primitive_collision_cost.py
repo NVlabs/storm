@@ -79,5 +79,8 @@ class PrimitiveCollisionCost(nn.Module):
 
         return cost.to(inp_device)
 
-
+    def change_param(self, **kwargs):
+        if 'weight' in kwargs:
+            print('changing primitive_collision_cost weight to', kwargs['weight'])
+            self.weight = torch.as_tensor(kwargs['weight'], **self.tensor_args)
 

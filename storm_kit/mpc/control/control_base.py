@@ -297,6 +297,9 @@ class Controller(ABC):
     #     self.np_random, seed = seeding.np_random(seed)
     #     return seed
 
-
-
+    def change_horizon(self, horizon, **kwargs):
+        self.horizon = horizon
+        self.gamma_seq = torch.cumprod(torch.tensor([1.0] + [self.gamma] * (horizon - 1)),
+                                       dim=0).reshape(1, horizon)
+        self.gamma_seq = self.gamma_seq.to(**self.tensor_args)
 

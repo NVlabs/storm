@@ -52,3 +52,8 @@ class ZeroCost(nn.Module):
 
         
         return cost.to(inp_device)
+
+    def change_param(self, **kwargs):
+        if 'weight' in kwargs:
+            print('changing zero cost weight to', kwargs['weight'])
+            self.weight = torch.as_tensor(kwargs['weight'], device=self.device, dtype=self.float_dtype)

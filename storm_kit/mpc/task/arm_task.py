@@ -41,7 +41,8 @@ class ArmTask(BaseTask):
         
         self.controller = self.init_mppi(task_file, robot_file, world_file)
         self.init_aux()
-        
+        self.changed_mppi_params = dict()
+
     def get_rollout_fn(self, **kwargs):
         rollout_fn = ArmBase(**kwargs)
         return rollout_fn
@@ -83,3 +84,20 @@ class ArmTask(BaseTask):
         self.exp_params = exp_params
         return controller
 
+
+    def change_horizon(self, horizon):
+        self.changed_mppi_params['horizon'] = horizon
+
+        dynamics_model = self.controller.rollout_fn.dynamics_model
+        init_q = torch.tensor(self.exp_params['model']['init_state'], **self.tensor_args)
+        init_action = torch.zeros((self.changed_mppi_params['horizon'], dynamics_model.d_action),
+                                  **self.tensor_args)
+        init_action[:, :] += init_q
+        if (self.exp_params['control_space'] == 'acc'):
+            init_action *= 0.0  # device=device)
+        elif (self.exp_params['control_space'] == 'pos'):
+            pass
+        self.changed_mppi_params['init_mean'] = init_action
+
+        self.controller.change_horizon(horizon, init_action)
+        self.controller.rollout_fn.change_horizon(horizon)

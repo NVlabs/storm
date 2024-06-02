@@ -56,3 +56,7 @@ class EEVelCost(nn.Module):
         cost = self.weight * self.gaussian_projection(error)
         return cost.to(inp_device)
 
+    def change_param(self, **kwargs):
+        if 'weight' in kwargs:
+            print('changing ee_vel_cost weight to', kwargs['weight'])
+            self.weight = kwargs['weight']

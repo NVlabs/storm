@@ -302,6 +302,39 @@ class OLGaussianMPC(Controller):
     def _calc_val(self, cost_seq, act_seq):
         raise NotImplementedError("_calc_val not implemented")
 
+    def change_num_particles(self, num_particles):
+
+        self.num_particles = num_particles
+
+        self.num_null_particles = round(int(self.null_act_frac * self.num_particles * 1.0))
+        self.num_neg_particles = round(
+            int(self.null_act_frac * self.num_particles)) - self.num_null_particles
+        self.num_nonzero_particles = self.num_particles - self.num_null_particles - self.num_neg_particles
+
+        self.sample_shape = torch.Size([self.num_nonzero_particles - 2])
+
+        if self.num_null_particles > 0:
+            self.null_act_seqs = torch.zeros(self.num_null_particles, self.horizon, self.d_action, **self.tensor_args)
+
+        print(f'MPPI num_particles changed to {self.num_particles}')
+
+    def change_horizon(self, horizon, init_mean:torch.tensor=0):
+        super(OLGaussianMPC, self).change_horizon(horizon)
+
+        self.init_mean = init_mean.clone().to(**self.tensor_args)
+
+        # TODO rather than creating a new sampler, modify the existing
+        if self.sample_params['type'] == 'multiple':
+            self.sample_lib = MultipleSampleLib(self.horizon, self.d_action,
+                                                tensor_args=self.tensor_args, **self.sample_params)
+
+        self.Z_seq = torch.zeros(1, self.horizon, self.d_action, **self.tensor_args)
+        self.reset_distribution()
+        if self.num_null_particles > 0:
+            self.null_act_seqs = torch.zeros(self.num_null_particles, self.horizon, self.d_action,
+                                             **self.tensor_args)
+        self.delta = None
+        print(f'MPPI horizon changed to {self.horizon}')
 
     @property
     def squashed_mean(self):

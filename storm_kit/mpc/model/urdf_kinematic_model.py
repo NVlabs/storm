@@ -38,6 +38,7 @@ class URDFKinematicModel(DynamicsModelBase):
         self.float_dtype = tensor_args['dtype']
         self.tensor_args = tensor_args
         self.dt = dt
+        self.input_dt = dt
         self.ee_link_name = ee_link_name
         self.batch_size = batch_size
         self.horizon = horizon
@@ -298,3 +299,51 @@ class URDFKinematicModel(DynamicsModelBase):
                 state_dict[joint.name].append(q[:,i].item())
         self.urdfpy_robot.animate(cfg_trajectory=state_dict,use_collision=True) 
 
+
+    def change_batch_size(self, batch_size):
+        self.batch_size = batch_size
+
+        self.state_seq = torch.zeros(self.batch_size, self.num_traj_points, self.d_state, device=self.device, dtype=self.float_dtype)
+        self.ee_pos_seq = torch.zeros(self.batch_size, self.num_traj_points, 3, device=self.device, dtype=self.float_dtype)
+        self.ee_rot_seq = torch.zeros(self.batch_size, self.num_traj_points, 3, 3, device=self.device, dtype=self.float_dtype)
+        self.Z = torch.tensor([0.], device=self.device, dtype=self.float_dtype) #torch.zeros(batch_size, self.n_dofs, device=self.device, dtype=self.float_dtype)
+
+        self.link_pos_seq = torch.empty((self.batch_size, self.num_traj_points, len(self.link_names),3), **self.tensor_args)
+        self.link_rot_seq = torch.empty((self.batch_size, self.num_traj_points, len(self.link_names),3,3), **self.tensor_args)
+
+        print(f'URDF Kinematic model batch_size (num_particles) changed to {self.batch_size}')
+
+    def change_horizon(self, horizon):
+        self.horizon = horizon
+        self.num_traj_points = int(round(horizon / self.input_dt))
+        self.state_seq = torch.zeros(self.batch_size, self.num_traj_points, self.d_state, device=self.device, dtype=self.float_dtype)
+        self.ee_pos_seq = torch.zeros(self.batch_size, self.num_traj_points, 3, device=self.device, dtype=self.float_dtype)
+        self.ee_rot_seq = torch.zeros(self.batch_size, self.num_traj_points, 3, 3, device=self.device, dtype=self.float_dtype)
+
+        self._integrate_matrix = build_int_matrix(self.num_traj_points, device=self.device, dtype=self.float_dtype)
+
+        self._fd_matrix = build_fd_matrix(self.num_traj_points, device=self.device,
+                                          dtype=self.float_dtype, order=1)
+
+        if (self.dt_traj_params is None):
+            dt_array = [self.dt] * int(1.0 * self.num_traj_points)
+        else:
+            dt_array = [self.dt_traj_params['base_dt']] * int(self.dt_traj_params['base_ratio'] * self.num_traj_points)
+            smooth_blending = torch.linspace(self.dt_traj_params['base_dt'], self.dt_traj_params['max_dt'],
+                                             steps=int((1 - self.dt_traj_params['base_ratio']) * self.num_traj_points)).tolist()
+            dt_array += smooth_blending
+        if (len(dt_array) != self.num_traj_points):
+            dt_array.insert(0, dt_array[0])
+        self._dt_h = torch.tensor(dt_array, dtype=self.float_dtype, device=self.device)
+        self.dt_traj = self._dt_h
+        self.traj_dt = self._dt_h
+        self._traj_tstep = torch.matmul(self._integrate_matrix, self._dt_h)
+
+        self.link_pos_seq = torch.empty((self.batch_size, self.num_traj_points, len(self.link_names), 3), **self.tensor_args)
+        self.link_rot_seq = torch.empty((self.batch_size, self.num_traj_points, len(self.link_names), 3, 3), **self.tensor_args)
+
+        self._integrate_matrix_nth = build_int_matrix(self.num_traj_points, order=self.action_order, device=self.device, dtype=self.float_dtype,
+                                                      traj_dt=self.traj_dt)
+        self._nth_traj_dt = torch.pow(self.traj_dt, self.action_order)
+
+        print(f'URDF Kinematic model horizon chnaged to {self.horizon}')

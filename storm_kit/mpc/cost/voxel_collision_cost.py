@@ -130,3 +130,8 @@ class VoxelCollisionCost(nn.Module):
         cost = self.weight * self.proj_gaussian(cost)
         
         return cost
+
+    def change_param(self, **kwargs):
+        if 'weight' in kwargs:
+            print('changing voxel_collision_cost weight to', kwargs['weight'])
+            self.weight = torch.as_tensor(kwargs['weight'], **self.tensor_args)

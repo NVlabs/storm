@@ -34,7 +34,9 @@ class StopCost(nn.Module):
         self.weight = torch.as_tensor(weight, **tensor_args)
         self.proj_gaussian = GaussianProjection(gaussian_params=gaussian_params)
         self.traj_dt = traj_dt
-        
+        self.max_limit = max_limit
+        self.max_nlimit = max_nlimit
+
         # compute max velocity across horizon:
         self.horizon = self.traj_dt.shape[0]
         sum_matrix = torch.tril(torch.ones((self.horizon, self.horizon), **self.tensor_args)).T
@@ -66,3 +68,26 @@ class StopCost(nn.Module):
 
         
         return cost.to(inp_device)
+
+    def change_param(self, **kwargs):
+        if 'weight' in kwargs:
+            print('changing stop_cost weight to', kwargs['weight'])
+            self.weight = torch.as_tensor(kwargs['weight'], **self.tensor_args)
+
+    def change_traj_dt(self, traj_dt):
+
+        self.traj_dt = traj_dt
+
+        # compute max velocity across horizon:
+        self.horizon = self.traj_dt.shape[0]
+        sum_matrix = torch.tril(torch.ones((self.horizon, self.horizon), **self.tensor_args)).T
+
+        if (self.max_nlimit is not None):
+            # every timestep max acceleration:
+            sum_matrix = torch.tril(torch.ones((self.horizon, self.horizon), **self.tensor_args)).T
+            delta_vel = self.traj_dt * self.max_nlimit
+            self.max_vel = ((sum_matrix @ delta_vel).unsqueeze(-1))
+        elif (self.max_limit is not None):
+            sum_matrix = torch.tril(torch.ones((self.horizon, self.horizon), **self.tensor_args)).T
+            delta_vel = torch.ones_like(self.traj_dt) * self.max_limit
+            self.max_vel = ((sum_matrix @ delta_vel).unsqueeze(-1))
