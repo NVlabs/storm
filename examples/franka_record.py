@@ -277,8 +277,22 @@ def mpc_robot_interactive(args, gym_instance):
     print(f"command[0]: {record_data['command'][0]}")
 
     print('======END=======')
-
     mpc_control.close()
+    torch.save(record_data, 'record_data')
+    # record_data_loaded = torch.load('record_data')
+    # print('For the reccorded data')
+    #
+    # print(f"x_des: \n{record_data_loaded['x_des']}")
+    # print(f"sim_dt: {record_data_loaded['sim_dt']}")
+    # print(f"w_T_r: \n{record_data_loaded['w_T_r']}")
+    # print(f"recorded_length: {record_data_loaded['recorded_length']}")
+    #
+    # print(f"goal_pose[0]: {record_data_loaded['goal_pose'][0]}")
+    # print(f"t_step[0]: {record_data_loaded['t_step'][0]}")
+    # print(f"current_robot_state[0]: {record_data_loaded['current_robot_state'][0]}")
+    # print(f"command[0]: {record_data_loaded['command'][0]}")
+
+
     return 1
 
 
