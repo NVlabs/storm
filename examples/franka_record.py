@@ -218,8 +218,8 @@ def mpc_robot_interactive(args, gym_instance):
 
             record_data['goal_pose'].append(record_goal_pose)
             record_data['t_step'].append(t_step)
-            record_data['current_robot_state'].append(current_robot_state)
-            record_data['command'].append(command)
+            record_data['current_robot_state'].append(copy.deepcopy(current_robot_state))
+            record_data['command'].append(copy.deepcopy(command))
 
             if (vis_ee_target):
                 # get current pose
