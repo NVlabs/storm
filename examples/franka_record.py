@@ -191,6 +191,8 @@ def mpc_robot_interactive(args, gym_instance):
     while (i > -100):
         try:
             gym_instance.step()
+            # print(f'step {i}')
+            # if i == 100: mpc_control.change_horizon(40)
             record_goal_pose = None
             if (vis_ee_target):
                 pose = copy.deepcopy(world_instance.get_pose(obj_body_handle))
@@ -247,6 +249,7 @@ def mpc_robot_interactive(args, gym_instance):
                 gym_instance.draw_lines(pts, color=color)
 
             robot_sim.command_robot_position(q_des, env_ptr, robot_ptr)
+            i+=1
 
         except KeyboardInterrupt:
             print('Closing')
