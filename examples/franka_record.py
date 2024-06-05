@@ -216,7 +216,7 @@ def mpc_robot_interactive(args, gym_instance):
             command = mpc_control.get_command(t_step, current_robot_state, control_dt=sim_dt, WAIT=True)
             q_des = copy.deepcopy(command['position'])
 
-            record_data['goal_pose'].append(record_goal_pose)
+            record_data['goal_pose'].append(copy.deepcopy(record_goal_pose))
             record_data['t_step'].append(t_step)
             record_data['current_robot_state'].append(copy.deepcopy(current_robot_state))
             record_data['command'].append(copy.deepcopy(command))
