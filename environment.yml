@@ -45,7 +45,6 @@ dependencies:
     - ghalton
     - argcomplete
     - click
-    - cloudpickle
     - imageio-ffmpeg
     - pyyaml
     - scipy

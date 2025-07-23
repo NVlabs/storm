@@ -33,16 +33,16 @@ from ...util_file import get_configs_path, get_gym_configs_path, join_path, load
 class CircleCollisionCost(nn.Module):
     def __init__(self, weight=None, collision_model=None,gaussian_params={}, tensor_args={'device':torch.device('cpu'), 'dtype':torch.float32}):
         super(CircleCollisionCost, self).__init__()
-        
+
         self.tensor_args = tensor_args
         self.weight = torch.as_tensor(weight,**self.tensor_args)
-        
+
         self.proj_gaussian = GaussianProjection(gaussian_params=gaussian_params)
-        
+
         # BUILD world and robot:
         world_yml = join_path(get_gym_configs_path(), collision_model)
         with open(world_yml) as file:
-            world_params = yaml.load(file, Loader=yaml.FullLoader)
+            world_params = yaml.safe_load(file, Loader=yaml.FullLoader)
         w_model = world_params['world_model']['coll_objs']
         self.world_spheres = torch.zeros((len(w_model.keys()),3), **tensor_args)
         for i,key in enumerate(w_model.keys()):
@@ -54,7 +54,7 @@ class CircleCollisionCost(nn.Module):
         self.dist = None
         self.t_mat = None
     def forward(self, pos_seq):
-        
+
         inp_device = pos_seq.device
         batch_size = pos_seq.shape[0]
         horizon = pos_seq.shape[1]
@@ -65,7 +65,7 @@ class CircleCollisionCost(nn.Module):
         for i in range(self.world_spheres.shape[0]):
             rel_position = torch.norm(pos_batch - self.world_spheres[i,:2], dim=-1)
             self.dist[:, i] = rel_position - self.world_spheres[i,2]
-        
+
         dist = self.dist
         dist = dist.view(batch_size, horizon, self.world_spheres.shape[0])
         # cost only when dist is less
@@ -73,12 +73,12 @@ class CircleCollisionCost(nn.Module):
         dist[dist > 0.0] = 0.0
         dist *= -1.0
 
-        cost = self.weight * dist.sum(dim=-1) 
+        cost = self.weight * dist.sum(dim=-1)
         res = cost
         if(self.t_mat is None or self.t_mat.shape[0] != res.shape[1]):
             self.t_mat = torch.ones((res.shape[1], res.shape[1]), **self.tensor_args).tril()
-            
-        
+
+
 
 
         return res.to(inp_device)

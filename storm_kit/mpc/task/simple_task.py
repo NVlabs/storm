@@ -46,7 +46,7 @@ class SimpleTask(BaseTask):
         self.controller = self.init_mppi(robot_file)
 
         self.init_aux()
-        
+
     def get_rollout_fn(self, **kwargs):
         rollout_fn = SimpleReacher(**kwargs)
         return rollout_fn
@@ -55,7 +55,7 @@ class SimpleTask(BaseTask):
         mpc_yml_file = join_path(mpc_configs_path(), robot_file)
 
         with open(mpc_yml_file) as file:
-            exp_params = yaml.load(file, Loader=yaml.FullLoader)
+            exp_params = yaml.safe_load(file, Loader=yaml.FullLoader)
 
         rollout_fn = self.get_rollout_fn(exp_params=exp_params, tensor_args=self.tensor_args)
 

@@ -55,7 +55,7 @@ def join_path(path1,path2):
 
 def load_yaml(file_path):
     with open(file_path) as file:
-        yaml_params = yaml.load(file, Loader=yaml.FullLoader)
+        yaml_params = yaml.safe_load(file, Loader=yaml.FullLoader)
     return yaml_params
 
 # get paths for urdf

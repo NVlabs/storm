@@ -46,19 +46,19 @@ def create_dataset(robot_name):
     num_particles = 5000
     task_file = robot_name+'_reacher.yml'
     # load robot model:
-    device = torch.device('cuda', 0) 
+    device = torch.device('cuda', 0)
     tensor_args = {'device':device, 'dtype':torch.float32}
     mpc_yml_file = join_path(get_mpc_configs_path(), task_file)
 
     with open(mpc_yml_file) as file:
-        exp_params = yaml.load(file, Loader=yaml.FullLoader)
+        exp_params = yaml.safe_load(file, Loader=yaml.FullLoader)
     exp_params['robot_params'] = exp_params['model'] #robot_params
     exp_params['cost']['primitive_collision']['weight'] = 0.0
     exp_params['control_space'] = 'pos'
     exp_params['mppi']['horizon'] = 2
     exp_params['mppi']['num_particles'] = num_particles
     rollout_fn = ArmBase(exp_params, tensor_args, world_params=None)
-    
+
     # sample joint angles
     dof = rollout_fn.dynamics_model.d_action
     q_samples = generate_halton_samples(num_particles*2, dof, use_ghalton=True,
@@ -73,11 +73,11 @@ def create_dataset(robot_name):
     q_samples = q_samples * range_b + low_bounds
     q_samples = q_samples.view(num_particles,2,dof)
 
-    
+
     start_state = torch.zeros((rollout_fn.dynamics_model.d_state), **tensor_args)
 
     state_dict = rollout_fn.dynamics_model.rollout_open_loop(start_state, q_samples)
-    
+
     link_pos_seq = state_dict['link_pos_seq']
     link_rot_seq = state_dict['link_rot_seq']
     # compute link poses
@@ -101,12 +101,12 @@ def create_dataset(robot_name):
     #y[y < -0.1] = 0.1
     #y[y >= -0.02] = 1.0
     #y[y < -0.02] = 0.0
-    
+
     print(torch.min(y), torch.max(y))
-    
+
     n_size = x.shape[0]
     #print(n_size)
-    # 
+    #
     nn_model = RobotSelfCollisionNet(n_joints=dof)
     nn_model.model.to(**tensor_args)
     model = nn_model.model
@@ -128,7 +128,7 @@ def create_dataset(robot_name):
     std_x = torch.mean(x, dim=0)* 0.0 + 1.0
     mean_y = torch.mean(y, dim=0)#* 0.0 #+ 1.0
     std_y = torch.mean(y, dim=0)#* 0.0 + 1.0
-    
+
     x_train = torch.div((x_train - mean_x),std_x)
     #x_train[x_train!=x_train] = 0.0
     x_coll = torch.div(x_coll - mean_x, std_x).detach()
@@ -167,9 +167,9 @@ def create_dataset(robot_name):
         i = 0
         x_train = x_train[torch.randperm(x_train.size()[0])]
         for i, data in enumerate(trainloader):
-            
+
             optimizer.zero_grad()
-            
+
             y = data['y'].to(device)
             y_gt = data['y_gt'].to(device)
             x = data['x'].to(device)
@@ -178,7 +178,7 @@ def create_dataset(robot_name):
 
             x_coll_batch = coll_data['x'].to(device)
             y_coll_batch = coll_data['y'].to(device)
-            
+
             y_pred = (model.forward(x))
             y_coll_pred = (model.forward(x_coll_batch))
             #print(y_coll_pred)#, y_coll_batch, x_coll_batch)
@@ -193,7 +193,7 @@ def create_dataset(robot_name):
             #i += batch_size
 
         model.eval()
-        
+
         y_pred = model.forward(x_val)
         #y_pred = torch.sigmoid(model.forward(x_val))
         #print(x_val)
@@ -219,7 +219,7 @@ def create_dataset(robot_name):
     with torch.no_grad():
         x = x_test#[y_test[:,0] > 0.0]
         y = y_test#[y_test[:,0] > 0.0]
-        
+
         #print(x.shape)
         y_pred = model.forward(x)
         y_pred = torch.mul(y_pred, std_y) + mean_y
@@ -230,12 +230,12 @@ def create_dataset(robot_name):
         loss = F.l1_loss(y_pred, y_test, reduction='mean')
         print(torch.median(y_pred), torch.mean(y_pred))
         print(loss.item())
-            
+
 if __name__=='__main__':
     create_dataset('franka')
     # load robot model
-    
+
     # load dataset
 
 
-    # 
+    #

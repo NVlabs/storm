@@ -37,34 +37,34 @@ class ArmTask(BaseTask):
     def __init__(self, task_file='ur10.yml', robot_file='ur10_reacher.yml', world_file='collision_env.yml', tensor_args={'device':"cpu", 'dtype':torch.float32}):
 
         super().__init__(tensor_args=tensor_args)
-        
-        
+
+
         self.controller = self.init_mppi(task_file, robot_file, world_file)
         self.init_aux()
-        
+
     def get_rollout_fn(self, **kwargs):
         rollout_fn = ArmBase(**kwargs)
         return rollout_fn
 
     def init_mppi(self, task_file, robot_file, collision_file):
         robot_yml = join_path(get_gym_configs_path(), robot_file)
-        
+
         with open(robot_yml) as file:
-            robot_params = yaml.load(file, Loader=yaml.FullLoader)
+            robot_params = yaml.safe_load(file, Loader=yaml.FullLoader)
 
         world_yml = join_path(get_gym_configs_path(), collision_file)
         with open(world_yml) as file:
-            world_params = yaml.load(file, Loader=yaml.FullLoader)
+            world_params = yaml.safe_load(file, Loader=yaml.FullLoader)
 
         mpc_yml_file = join_path(mpc_configs_path(), task_file)
 
         with open(mpc_yml_file) as file:
-            exp_params = yaml.load(file, Loader=yaml.FullLoader)
+            exp_params = yaml.safe_load(file, Loader=yaml.FullLoader)
         exp_params['robot_params'] = exp_params['model'] #robot_params
-        
-        
+
+
         rollout_fn = self.get_rollout_fn(exp_params=exp_params, tensor_args=self.tensor_args, world_params=world_params)
-        
+
         mppi_params = exp_params['mppi']
         dynamics_model = rollout_fn.dynamics_model
         mppi_params['d_action'] = dynamics_model.d_action

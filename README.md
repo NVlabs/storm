@@ -1,6 +1,8 @@
 # STORM
 **Stochastic Tensor Optimization for Robot Motion** - *A GPU Robot Motion Toolkit*
 
+#### This Package is no longer maintained. Use https://github.com/NVlabs/curobo instead.
+
 [[Install Instructions](install_instructions.md)] [[Paper](https://arxiv.org/abs/2104.13542)] [[Website](https://sites.google.com/view/manipulation-mpc/home)]
 
 This package contains code for reactive robot motion leveraging parallel compute on the GPU. The implemented control framework leverages MPPI to optimize over sampled actions and their costs. The costs are computed by rolling out the forward model from the current state with the sampled actions. Most files are documented with sphinx. Once you clone this repo, go into docs folder and run `sh generate_docs.sh` to generate documentation.
